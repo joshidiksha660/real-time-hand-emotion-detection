@@ -94,6 +94,13 @@ logger.info(
     f"Frame Skipping Enabled: {FRAME_SKIP}"
 )
 
+logger.info(
+    "Hand Detector Initialized"
+)
+
+logger.info(
+    "Emotion Detector Initialized"
+)
 # --------------------------------------------------
 # MAIN LOOP
 # --------------------------------------------------
