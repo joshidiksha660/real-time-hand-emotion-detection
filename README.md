@@ -84,6 +84,7 @@ Benefits:
 
 ---
 
+
 ## Performance Results
 
 ### Before Optimization
@@ -114,6 +115,38 @@ Benefits:
 * Lower computational overhead
 
 ---
+## Performance Benchmarking
+
+The application was benchmarked using different frame-skipping configurations to evaluate real-time performance.
+
+### Benchmark Results
+
+| Frame Skip | FPS  | CPU Usage |
+| ---------- | ---- | --------- |
+| 1          | 4.9  | 74.8%     |
+| 5          | 13.5 | 75.0%     |
+| 10         | 23.4 | 50.0%     |
+| 13         | 25.4 | 25.9%     |
+
+### Conclusion
+
+Frame skipping significantly improved application performance by reducing the frequency of DeepFace emotion inference.
+
+A frame skip value of **10** provided the best balance between:
+
+* Real-time responsiveness
+* Emotion detection accuracy
+* CPU utilization
+* Overall application smoothness
+
+The final implementation uses:
+
+```python
+FRAME_SKIP = 10
+```
+
+for production execution.
+
 
 ## Technologies Used
 
