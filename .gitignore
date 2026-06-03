@@ -8,13 +8,17 @@ __pycache__/
 # VS Code
 .vscode/
 
+# Log Files
+logs/
+*.log
+
 # Demo Files
 main_demo.py
 hand_detector_demo.py
 emotion_detector_demo.py
 
 # Notes / Documentation
-explaination.md
+explanation.md
 
 # Images
 captured.jpg

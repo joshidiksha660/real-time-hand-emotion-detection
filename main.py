@@ -12,6 +12,12 @@ import time
 import psutil
 
 # --------------------------------------------------
+# LOGGER
+# --------------------------------------------------
+
+from utils.logger import logger
+
+# --------------------------------------------------
 # CONFIGURATION
 # --------------------------------------------------
 
@@ -42,6 +48,14 @@ from utils.draw_utils import (
 )
 
 # --------------------------------------------------
+# APPLICATION START
+# --------------------------------------------------
+
+logger.info(
+    "Application Started"
+)
+
+# --------------------------------------------------
 # OPEN WEBCAM
 # --------------------------------------------------
 
@@ -49,12 +63,15 @@ cap = cv2.VideoCapture(
     CAMERA_ID
 )
 
+logger.info(
+    "Webcam Initialized"
+)
+
 # --------------------------------------------------
 # PERFORMANCE VARIABLES
 # --------------------------------------------------
 
-# Store previous frame time
-# Used to calculate FPS
+# Used for FPS calculation
 prev_time = time.time()
 
 # Current FPS value
@@ -64,15 +81,18 @@ fps = 0
 # FRAME SKIPPING VARIABLES
 # --------------------------------------------------
 
-# Counts how many frames have passed
+# Counts processed frames
 frame_count = 0
 
 # Stores previous emotion result
-# Used during skipped frames
 emotion_data = None
 
-# Run emotion detection every 5th frame
-FRAME_SKIP = 5
+# Run DeepFace every Nth frame
+FRAME_SKIP = 10
+
+logger.info(
+    f"Frame Skipping Enabled: {FRAME_SKIP}"
+)
 
 # --------------------------------------------------
 # MAIN LOOP
@@ -86,32 +106,31 @@ while True:
 
     success, frame = cap.read()
 
-    # Stop if camera fails
+    # Stop if webcam fails
     if not success:
+
+        logger.error(
+            "Failed To Read Webcam Frame"
+        )
+
         break
 
     # ----------------------------------
     # FPS CALCULATION
     # ----------------------------------
 
-    # Current timestamp
     current_time = time.time()
 
-    # FPS Formula
-    # FPS = Frames Per Second
     fps = 1 / (current_time - prev_time)
 
-    # Update previous timestamp
     prev_time = current_time
 
     # ----------------------------------
     # SYSTEM PERFORMANCE
     # ----------------------------------
 
-    # CPU usage percentage
     cpu_usage = psutil.cpu_percent()
 
-    # RAM usage percentage
     memory_usage = psutil.virtual_memory().percent
 
     # ----------------------------------
@@ -132,7 +151,9 @@ while True:
     # EMOTION DETECTION
     # ----------------------------------
 
-    # Run DeepFace only every 5th frame
+    # Run emotion detection only
+    # every FRAME_SKIP frames
+
     if frame_count % FRAME_SKIP == 0:
 
         emotion_data = detect_emotion(
@@ -140,7 +161,7 @@ while True:
         )
 
     # ----------------------------------
-    # DRAW DETECTION RESULTS
+    # DRAW RESULTS
     # ----------------------------------
 
     draw_hands(
@@ -148,8 +169,6 @@ while True:
         hand_results
     )
 
-    # Draw latest emotion result
-    # even on skipped frames
     if emotion_data is not None:
 
         draw_emotion(
@@ -158,7 +177,7 @@ while True:
         )
 
     # ----------------------------------
-    # DRAW PERFORMANCE METRICS
+    # PERFORMANCE DISPLAY
     # ----------------------------------
 
     cv2.putText(
@@ -202,7 +221,7 @@ while True:
     )
 
     # ----------------------------------
-    # SHOW FINAL OUTPUT
+    # SHOW OUTPUT
     # ----------------------------------
 
     cv2.imshow(
@@ -210,8 +229,16 @@ while True:
         frame
     )
 
-    # Exit when q is pressed
+    # ----------------------------------
+    # EXIT
+    # ----------------------------------
+
     if cv2.waitKey(1) & 0xFF == ord('q'):
+
+        logger.info(
+            "Application Closed By User"
+        )
+
         break
 
 # --------------------------------------------------
@@ -221,3 +248,7 @@ while True:
 cap.release()
 
 cv2.destroyAllWindows()
+
+logger.info(
+    "Application Shutdown Complete"
+)
