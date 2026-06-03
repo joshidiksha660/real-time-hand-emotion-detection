@@ -13,7 +13,7 @@ The system captures live webcam video and performs:
 * Face localization
 * Performance monitoring and optimization
 
-The project follows a modular architecture similar to production applications by separating configuration, detection logic, utility functions, and application control.
+The project follows a modular architecture by separating configuration, detection logic, utility functions, and application control.
 
 ---
 
@@ -63,6 +63,34 @@ The application displays real-time performance metrics:
 
 ---
 
+### Logging System
+
+A centralized logging system was implemented using Python's built-in `logging` module.
+
+The logger records important application events such as:
+
+* Application startup
+* Application shutdown
+* Runtime events
+* Errors and warnings
+* Performance testing events
+
+Logs are stored inside:
+
+```text
+logs/vision_ai.log
+```
+
+Benefits:
+
+* Easier debugging
+* Better error tracking
+* Runtime monitoring
+* Production-style application logging
+* Improved maintainability
+
+---
+
 ### Performance Optimization
 
 A frame-skipping strategy was implemented to improve application performance.
@@ -84,40 +112,9 @@ Benefits:
 
 ---
 
-
-## Performance Results
-
-### Before Optimization
-
-| Metric    | Value  |
-| --------- | ------ |
-| FPS       | ~5 FPS |
-| CPU Usage | ~92%   |
-| RAM Usage | ~79%   |
-
----
-
-### After Frame Skipping
-
-| Metric    | Value     |
-| --------- | --------- |
-| FPS       | ~13.5 FPS |
-| CPU Usage | ~75%      |
-| RAM Usage | ~76%      |
-
----
-
-### Improvement
-
-* FPS increased by approximately 170%
-* CPU usage reduced significantly
-* Smoother real-time experience
-* Lower computational overhead
-
----
 ## Performance Benchmarking
 
-The application was benchmarked using different frame-skipping configurations to evaluate real-time performance.
+The application was benchmarked using multiple frame-skipping configurations.
 
 ### Benchmark Results
 
@@ -128,25 +125,44 @@ The application was benchmarked using different frame-skipping configurations to
 | 10         | 23.4 | 50.0%     |
 | 13         | 25.4 | 25.9%     |
 
-### Conclusion
+### Analysis
 
-Frame skipping significantly improved application performance by reducing the frequency of DeepFace emotion inference.
+Increasing the frame skip value reduced the number of DeepFace emotion inference calls.
 
-A frame skip value of **10** provided the best balance between:
+This resulted in:
 
-* Real-time responsiveness
-* Emotion detection accuracy
-* CPU utilization
-* Overall application smoothness
+* Higher FPS
+* Lower CPU utilization
+* Improved application responsiveness
+* Reduced computational overhead
 
-The final implementation uses:
+### Recommended Configuration
+
+After benchmarking multiple configurations, the following value was selected:
 
 ```python
 FRAME_SKIP = 10
 ```
 
-for production execution.
+Reasons:
 
+* High FPS (~23 FPS)
+* Moderate CPU usage (~50%)
+* Smooth user experience
+* Emotion predictions remain responsive
+* Better balance between speed and accuracy
+
+### Conclusion
+
+Frame skipping improved performance by approximately:
+
+* 377% FPS increase (4.9 → 23.4 FPS)
+* Significant reduction in CPU utilization
+* Smoother real-time interaction
+
+This demonstrates how selective model execution can improve real-time computer vision systems without sacrificing usability.
+
+---
 
 ## Technologies Used
 
@@ -174,7 +190,11 @@ vision_ai_final/
 │   └── emotion_detector.py
 
 ├── utils/
-│   └── draw_utils.py
+│   ├── draw_utils.py
+│   └── logger.py
+
+├── logs/
+│   └── vision_ai.log
 
 ├── requirements.txt
 
@@ -238,6 +258,17 @@ Responsible for:
 
 ---
 
+### utils/logger.py
+
+Responsible for:
+
+* Creating application logs
+* Recording runtime events
+* Recording errors and warnings
+* Supporting debugging and monitoring
+
+---
+
 ### config/settings.py
 
 Stores configurable settings such as:
@@ -265,6 +296,8 @@ Emotion Detector
 Drawing Utilities
       ↓
 Performance Metrics
+      ↓
+Logger
       ↓
 Display Output
 ```
@@ -343,7 +376,8 @@ in real time through the webcam feed.
 * Face Recognition
 * Emotion Analytics Dashboard
 * Emotion History Tracking
-* CSV Logging
+* Structured CSV Logging
+* Log Rotation
 * Streamlit Dashboard
 * Model Performance Benchmarking
 
