@@ -1,23 +1,41 @@
-# OpenCV for webcam
+# --------------------------------------------------
+# IMPORTS
+# --------------------------------------------------
+
+# OpenCV for webcam and drawing
 import cv2
 
-# Settings
+# Used to calculate FPS
+import time
+
+# Used to monitor CPU and RAM usage
+import psutil
+
+# --------------------------------------------------
+# CONFIGURATION
+# --------------------------------------------------
+
 from config.settings import (
     CAMERA_ID,
     WINDOW_NAME
 )
 
-# Hand Detection Module
+# --------------------------------------------------
+# DETECTORS
+# --------------------------------------------------
+
 from detectors.hand_detector import (
     detect_hands
 )
 
-# Emotion Detection Module
 from detectors.emotion_detector import (
     detect_emotion
 )
 
-# Drawing Utilities
+# --------------------------------------------------
+# DRAWING UTILITIES
+# --------------------------------------------------
+
 from utils.draw_utils import (
     draw_hands,
     draw_emotion
@@ -32,17 +50,69 @@ cap = cv2.VideoCapture(
 )
 
 # --------------------------------------------------
+# PERFORMANCE VARIABLES
+# --------------------------------------------------
+
+# Store previous frame time
+# Used to calculate FPS
+prev_time = time.time()
+
+# Current FPS value
+fps = 0
+
+# --------------------------------------------------
+# FRAME SKIPPING VARIABLES
+# --------------------------------------------------
+
+# Counts how many frames have passed
+frame_count = 0
+
+# Stores previous emotion result
+# Used during skipped frames
+emotion_data = None
+
+# Run emotion detection every 5th frame
+FRAME_SKIP = 5
+
+# --------------------------------------------------
 # MAIN LOOP
 # --------------------------------------------------
 
 while True:
 
-    # Capture one frame
+    # ----------------------------------
+    # CAPTURE FRAME
+    # ----------------------------------
+
     success, frame = cap.read()
 
     # Stop if camera fails
     if not success:
         break
+
+    # ----------------------------------
+    # FPS CALCULATION
+    # ----------------------------------
+
+    # Current timestamp
+    current_time = time.time()
+
+    # FPS Formula
+    # FPS = Frames Per Second
+    fps = 1 / (current_time - prev_time)
+
+    # Update previous timestamp
+    prev_time = current_time
+
+    # ----------------------------------
+    # SYSTEM PERFORMANCE
+    # ----------------------------------
+
+    # CPU usage percentage
+    cpu_usage = psutil.cpu_percent()
+
+    # RAM usage percentage
+    memory_usage = psutil.virtual_memory().percent
 
     # ----------------------------------
     # HAND DETECTION
@@ -53,15 +123,24 @@ while True:
     )
 
     # ----------------------------------
+    # FRAME COUNTER
+    # ----------------------------------
+
+    frame_count += 1
+
+    # ----------------------------------
     # EMOTION DETECTION
     # ----------------------------------
 
-    emotion_data = detect_emotion(
-        frame
-    )
+    # Run DeepFace only every 5th frame
+    if frame_count % FRAME_SKIP == 0:
+
+        emotion_data = detect_emotion(
+            frame
+        )
 
     # ----------------------------------
-    # DRAW RESULTS
+    # DRAW DETECTION RESULTS
     # ----------------------------------
 
     draw_hands(
@@ -69,13 +148,61 @@ while True:
         hand_results
     )
 
-    draw_emotion(
+    # Draw latest emotion result
+    # even on skipped frames
+    if emotion_data is not None:
+
+        draw_emotion(
+            frame,
+            emotion_data
+        )
+
+    # ----------------------------------
+    # DRAW PERFORMANCE METRICS
+    # ----------------------------------
+
+    cv2.putText(
         frame,
-        emotion_data
+        f"FPS: {fps:.1f}",
+        (10, 30),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        0.7,
+        (0, 255, 0),
+        2
+    )
+
+    cv2.putText(
+        frame,
+        f"CPU: {cpu_usage:.1f}%",
+        (10, 60),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        0.7,
+        (0, 255, 0),
+        2
+    )
+
+    cv2.putText(
+        frame,
+        f"RAM: {memory_usage:.1f}%",
+        (10, 90),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        0.7,
+        (0, 255, 0),
+        2
+    )
+
+    cv2.putText(
+        frame,
+        f"Skip: {FRAME_SKIP}",
+        (10, 120),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        0.7,
+        (0, 255, 0),
+        2
     )
 
     # ----------------------------------
-    # SHOW OUTPUT
+    # SHOW FINAL OUTPUT
     # ----------------------------------
 
     cv2.imshow(

@@ -1,17 +1,19 @@
-# Vision AI - Hand & Emotion Detection
+# Vision AI - Real-Time Hand & Emotion Detection
 
 ## Overview
 
-Vision AI is a real-time Computer Vision project built using Python.
+Vision AI is a real-time Computer Vision application built using Python, OpenCV, MediaPipe, DeepFace, and TensorFlow.
 
-The application uses a webcam to:
+The system captures live webcam video and performs:
 
-- Detect hands in real time
-- Track 21 hand landmarks
-- Detect facial emotions
-- Display emotion confidence scores
-- Draw face bounding boxes
-- Display hand landmark connections
+* Real-time hand detection
+* Hand landmark tracking
+* Facial emotion recognition
+* Emotion confidence scoring
+* Face localization
+* Performance monitoring and optimization
+
+The project follows a modular architecture similar to production applications by separating configuration, detection logic, utility functions, and application control.
 
 ---
 
@@ -21,28 +23,106 @@ The application uses a webcam to:
 
 Uses MediaPipe Hands to:
 
-- Detect hands
-- Track 21 hand landmarks
-- Draw landmark connections
+* Detect hands in real time
+* Track 21 hand landmarks
+* Draw landmark connections
+* Support multiple hand detection
+
+---
 
 ### Emotion Detection
 
 Uses DeepFace to:
 
-- Detect faces
-- Analyze facial expressions
-- Predict emotions
-- Display confidence scores
+* Detect faces
+* Analyze facial expressions
+* Predict emotions
+* Display confidence scores
+* Draw face bounding boxes
+
+Supported emotions include:
+
+* Happy
+* Sad
+* Angry
+* Fear
+* Surprise
+* Disgust
+* Neutral
+
+---
+
+### Performance Monitoring
+
+The application displays real-time performance metrics:
+
+* FPS (Frames Per Second)
+* CPU Usage
+* RAM Usage
+* Frame Skip Value
+
+---
+
+### Performance Optimization
+
+A frame-skipping strategy was implemented to improve application performance.
+
+Since emotion detection is computationally expensive, DeepFace is not executed on every frame.
+
+Instead:
+
+* Hand detection runs continuously
+* Emotion detection runs periodically
+* Previous emotion predictions are reused between skipped frames
+
+Benefits:
+
+* Higher FPS
+* Lower CPU usage
+* Improved responsiveness
+* Better real-time performance
+
+---
+
+## Performance Results
+
+### Before Optimization
+
+| Metric    | Value  |
+| --------- | ------ |
+| FPS       | ~5 FPS |
+| CPU Usage | ~92%   |
+| RAM Usage | ~79%   |
+
+---
+
+### After Frame Skipping
+
+| Metric    | Value     |
+| --------- | --------- |
+| FPS       | ~13.5 FPS |
+| CPU Usage | ~75%      |
+| RAM Usage | ~76%      |
+
+---
+
+### Improvement
+
+* FPS increased by approximately 170%
+* CPU usage reduced significantly
+* Smoother real-time experience
+* Lower computational overhead
 
 ---
 
 ## Technologies Used
 
-- Python
-- OpenCV
-- MediaPipe
-- DeepFace
-- TensorFlow
+* Python
+* OpenCV
+* MediaPipe
+* DeepFace
+* TensorFlow
+* psutil
 
 ---
 
@@ -76,14 +156,17 @@ vision_ai_final/
 
 ### main.py
 
-Acts as the controller of the application.
+Main controller of the application.
 
 Responsibilities:
 
-- Capture webcam frames
-- Call hand detector
-- Call emotion detector
-- Display final output
+* Open webcam
+* Capture frames
+* Calculate FPS
+* Monitor CPU and RAM
+* Manage frame skipping
+* Call detectors
+* Display output
 
 ---
 
@@ -91,9 +174,10 @@ Responsibilities:
 
 Responsible for:
 
-- Loading MediaPipe Hands
-- Detecting hands
-- Returning hand landmark data
+* Loading MediaPipe Hands
+* Processing webcam frames
+* Detecting hand landmarks
+* Returning landmark data
 
 ---
 
@@ -101,9 +185,11 @@ Responsible for:
 
 Responsible for:
 
-- Running DeepFace emotion analysis
-- Returning emotion predictions
-- Returning face coordinates
+* Running DeepFace emotion analysis
+* Detecting faces
+* Returning emotion predictions
+* Returning confidence scores
+* Returning face coordinates
 
 ---
 
@@ -111,31 +197,66 @@ Responsible for:
 
 Responsible for:
 
-- Drawing hand landmarks
-- Drawing face bounding boxes
-- Displaying emotion labels
+* Drawing hand landmarks
+* Drawing hand connections
+* Drawing face bounding boxes
+* Displaying emotion labels
+* Displaying confidence scores
 
 ---
 
 ### config/settings.py
 
-Stores application settings such as:
+Stores configurable settings such as:
 
-- Camera ID
-- Window name
-- Font size
-- Colors
-- Drawing thickness
+* Camera ID
+* Window Name
+* Colors
+* Drawing Thickness
+* Font Size
+* Frame Skip Value
+
+---
+
+## System Workflow
+
+```text
+Webcam Frame
+      ↓
+Frame Counter
+      ↓
+Hand Detector
+      ↓
+Emotion Detector
+      ↓
+Drawing Utilities
+      ↓
+Performance Metrics
+      ↓
+Display Output
+```
 
 ---
 
 ## Installation
+
+### Clone Repository
+
+```bash
+git clone https://github.com/joshidiksha660/real-time-hand-emotion-detection.git
+
+cd real-time-hand-emotion-detection
+```
+
+---
 
 ### Create Virtual Environment
 
 ```bash
 uv venv
 ```
+
+---
 
 ### Activate Virtual Environment
 
@@ -144,6 +265,8 @@ Windows:
 ```bash
 .venv\Scripts\activate
 ```
+
+---
 
 ### Install Dependencies
 
@@ -161,36 +284,45 @@ python main.py
 
 ---
 
-## Example Workflow
+## Example Output
 
-```text
-Webcam Frame
-      ↓
-Hand Detector
-      ↓
-Emotion Detector
-      ↓
-Drawing Utilities
-      ↓
-Display Output
-```
+The application displays:
+
+* Hand landmarks
+* Face bounding box
+* Emotion prediction
+* Confidence score
+* FPS
+* CPU usage
+* RAM usage
+* Frame skip value
+
+in real time through the webcam feed.
 
 ---
 
 ## Future Improvements
 
-- Hand Gesture Recognition
-- Face Recognition
-- Emotion Analytics Dashboard
-- FPS Counter
-- Emotion History Tracking
-- CSV Logging
-- Streamlit Dashboard
+* GPU Utilization Monitoring
+* Adaptive Frame Skipping
+* Multi-Person Emotion Detection
+* Hand Gesture Recognition
+* Face Recognition
+* Emotion Analytics Dashboard
+* Emotion History Tracking
+* CSV Logging
+* Streamlit Dashboard
+* Model Performance Benchmarking
 
 ---
 
 ## Author
 
-Diksha Joshi
+### Diksha Joshi
 
-MCA Student | Python Developer | Computer Vision Enthusiast
+MCA Student
+AI/ML Developer
+Computer Vision Enthusiast
+
+GitHub:
+https://github.com/joshidiksha660
