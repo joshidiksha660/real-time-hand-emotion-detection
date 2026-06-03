@@ -1,0 +1,24 @@
+# Virtual Environment
+.venv/
+
+# Python Cache
+__pycache__/
+*.pyc
+
+# VS Code
+.vscode/
+
+# Demo Files
+main_demo.py
+hand_detector_demo.py
+emotion_detector_demo.py
+
+# Notes / Documentation
+explaination.md
+
+# Images
+captured.jpg
+
+# OS Files
+Thumbs.db
+.DS_Store
